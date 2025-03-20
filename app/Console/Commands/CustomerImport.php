@@ -29,6 +29,11 @@ class CustomerImport extends Command
      */
     public function handleImport($filePath)
     {
-        $this->import08Concurrent($filePath);
+        collect(file($filePath))
+            ->skip(1)
+            ->map(fn ($line) => str_getcsv($line))
+            ->map(fn ($row) => [
+
+            ]);
     }
 }
