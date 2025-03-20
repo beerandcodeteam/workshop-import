@@ -1,9 +1,7 @@
-from faker import Faker
 import csv
 from datetime import datetime
 
-fake = Faker()
-num_rows = 10000000  # 10 milhões de linhas
+num_rows = 100  # 10 milhões de linhas
 
 header = [
     "unit",
