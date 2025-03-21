@@ -1,7 +1,7 @@
 import csv
 from datetime import datetime
 
-num_rows = 100  # 10 milhões de linhas
+num_rows = 5000000  # 10 milhões de linhas
 
 header = [
     "unit",

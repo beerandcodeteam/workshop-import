@@ -48,7 +48,7 @@ trait ImportHelper
     {
         $file = select(
             label: 'What file do you want to import?',
-            options: ['CSV 100 Clientes', 'CSV 1K Clientes', 'CSV 10K Clientes', 'CSV 100K Clientes', 'CSV 1M Clientes', 'CSV 10M Clientes']
+            options: ['CSV 100 Clientes', 'CSV 1K Clientes', 'CSV 10K Clientes', 'CSV 100K Clientes', 'CSV 1M Clientes', 'CSV 5M Clientes']
         );
 
         return match ($file) {
@@ -57,7 +57,7 @@ trait ImportHelper
             'CSV 10K Clientes' => base_path('customers-10000.csv'),
             'CSV 100K Clientes' => base_path('customers-100000.csv'),
             'CSV 1M Clientes' => base_path('customers-1000000.csv'),
-            'CSV 10M Clientes' => base_path('customers-10000000.csv'),
+            'CSV 5M Clientes' => base_path('customers-5000000.csv'),
         };
     }
 
@@ -598,8 +598,8 @@ trait ImportHelper
                     'updated_at' => $now,
                 ];
             }
-            Customer::insert($customersData);
-            $customerIds = Customer::latest()->take(count($customersData))->pluck('id')->toArray();
+            \DB::table('customers')->insert($customersData);
+            $customerIds = \DB::table('customers')->latest()->take(count($customersData))->pluck('id')->toArray();
 
             // Etapa 2: Inserir Properties
             $propertiesData = [];
@@ -779,7 +779,9 @@ trait ImportHelper
 
                 // 3. Inserir registros em properties
                 $placeholders = rtrim(str_repeat('(?, ?, ?, ?, ?, ?, ?),', $totalRows), ',');
+
                 $sqlProperties = 'INSERT INTO properties (customer_id, unit, block, buy_value, outstanding_balance, created_at, updated_at) VALUES ' . $placeholders;
+
                 $valuesProperties = [];
                 foreach ($rows as $index => $row) {
                     $valuesProperties[] = $customerIds[$index];
@@ -790,6 +792,7 @@ trait ImportHelper
                     $valuesProperties[] = $now;
                     $valuesProperties[] = $now;
                 }
+
                 $stmt = $pdo->prepare($sqlProperties);
                 $stmt->execute($valuesProperties);
 
@@ -1260,10 +1263,6 @@ trait ImportHelper
                             if (in_array($entry['email'], $existingEmails)) {
                                 $errorMessage = "Linha {$entry['line_number']}: Email {$entry['email']} já existe no banco de dados.\n";
                                 file_put_contents($errorLogFile, $errorMessage, FILE_APPEND | LOCK_EX);
-                                // Se necessário, remova ou marque este registro para que não seja inserido
-                            } else {
-                                // Aqui você pode inserir o registro no banco de dados
-                                // Exemplo: Person::create($row);
                             }
                         }
                     }

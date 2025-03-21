@@ -2,8 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\MaritalStatusEnum;
 use App\Events\ErrorFileDetected;
+use App\Models\Customer;
 use App\Traits\ImportHelper;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class CustomerImport extends Command
@@ -29,6 +32,6 @@ class CustomerImport extends Command
      */
     public function handleImport($filePath)
     {
-
+        $this->import08Concurrent($filePath);
     }
 }

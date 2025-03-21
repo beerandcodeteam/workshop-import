@@ -2,3 +2,4 @@
 
 ./vendor/bin/sail art migrate:fresh --seed
 ./vendor/bin/sail art app:customer-import
+

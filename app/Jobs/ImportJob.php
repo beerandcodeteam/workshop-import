@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Events\ErrorFileDetected;
+use App\Events\ImportCompleted;
 use App\Traits\ImportHelper;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -30,6 +31,7 @@ class ImportJob implements ShouldQueue
             broadcast(new ErrorFileDetected($this->file));
         } else {
             $this->import08Concurrent($this->file);
+            broadcast(new ImportCompleted());
         }
 
     }

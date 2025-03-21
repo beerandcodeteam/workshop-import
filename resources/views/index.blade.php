@@ -38,6 +38,12 @@
                 O arquivo tem problemas na importação: <a class="ml-4 font-bold underline" :href="url" target="_blank">Ver problemas</a>
             </div>
         </div>
+
+        <div x-data="logFileBroadcast()" x-init="init()" class="flex flex-row w-full">
+            <div x-show="completed" class="bg-green-200 flex flex-row w-full rounded-lg p-4 text-green-900 border-green-900 mt-4">
+                Importação concluida com sucesso
+            </div>
+        </div>
         <div class="mt-8 flow-root">
             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -119,6 +125,7 @@
         function logFileBroadcast() {
             return {
                 url: "",
+                completed: false,
                 init() {
                     console.log("INICIANDO")
                     // Subscrição ao canal público "public-channel"
@@ -127,6 +134,13 @@
                             console.log(event);
 
                             this.url = event.file
+
+                        });
+
+                    Echo.channel('import-completed')
+                        .listen('.import.completed', (event) => {
+
+                            this.completed = true;
 
                         });
                 }
